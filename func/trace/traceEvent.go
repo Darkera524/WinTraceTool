@@ -10,14 +10,15 @@ import (
 	"io/ioutil"
 	"unsafe"
 	"strings"
+	"github.com/Darkera524/WinTraceTool/g"
 )
 
-type DNSBuilder struct{
+type TraceBuilder struct{
 	rawData map[string]interface{}
 	formmattedData map[string]interface{}
 }
 
-func (t *DNSBuilder) getData() error {
+func (t *TraceBuilder) getData() error {
 	err := Checkpy()
 	if err != nil {
 		//差错处理
@@ -62,7 +63,7 @@ func (t *DNSBuilder) getData() error {
 	return nil
 }
 
-func (t *DNSBuilder) formatData(line string) error {
+func (t *TraceBuilder) formatData(line string) error {
 	rs := []rune(string(line))
 	length := len(rs)
 	eventCode,err := strconv.Atoi(string(rs[1:4]))
@@ -117,12 +118,12 @@ func (t *DNSBuilder) formatData(line string) error {
 	return nil
 }
 
-func (t *DNSBuilder) sendData(data []byte) error {
+func (t *TraceBuilder) sendData(data []byte) error {
 	fmt.Println(string(data))
 	reader := bytes.NewBuffer(data)
 
 	//url从配置文件中读取
-	url := "http://10.201.81.211:8080/api/v1/datapoints"
+	url := g.GetConfig().KairosDB_path
 
 	request,err := http.Post(url,"application/json;charset=utf-8", reader)
 	if err != nil {

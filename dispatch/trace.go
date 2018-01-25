@@ -5,9 +5,11 @@ import (
 )
 
 func TraceExec() {
-	dns := trace.DNSBuilder{}
 
-	traceins := trace.Trace{&dns}
+
+	trace_ins := trace.TraceBuilder{}
+
+	traceins := trace.Trace{&trace_ins}
 	traceins.CreateTrace()
 
 

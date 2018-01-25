@@ -16,23 +16,41 @@
 
 import time
 import etw
+import requests
+import sys
+import json
 
 
-def some_func():
-    # define capture provider info
-    providers = [etw.ProviderInfo('Some Provider', etw.GUID("{11111111-1111-1111-1111-111111111111}"))]
+def some_func(name, guid):
+    # define capture provider info "{11111111-1111-1111-1111-111111111111}"
+    providers = [etw.ProviderInfo(name, etw.GUID(guid))]
     # create instance of ETW class
-    job = etw.ETW(providers=providers, event_callback=lambda x: print(str(x).replace("'","\""))
+    job = etw.ETW(providers=providers, event_callback=lambda x: print(str(x).replace("'","\"")))
 
     # start capture
     job.start()
 
     # wait some time
-    time.sleep(5)
+    #time.sleep(5)
 
-    # stop capture
-    job.stop()
+    while True:
+        url = "http://127.0.0.1:8093/query"
+        d = [
+            {
+                "Provider": guid
+            }
+        ]
+
+        r = requests.post(url, json.dumps(d))
+        response = r.text
+
+        if response == "no":
+            # stop capture
+            job.stop()
+            break
 
 
 if __name__ == '__main__':
-    some_func()
+    name = sys.argv[1]
+    guid = sys.argv[2]
+    some_func(name, guid)
