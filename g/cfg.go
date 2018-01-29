@@ -17,7 +17,7 @@ var (
 
 
 type Config struct {
-	KairosDB_path	string		`json:"kairos_db_path"`
+	KairosDB_path	string		`json:"kairosDB_path"`
 	Server_path		string		`json:"server_path"`
 	Server_timeout 	int 		`json:"server_timeout"`
 	Listen_port		string		`json:"listen_port"`

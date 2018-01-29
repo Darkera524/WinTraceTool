@@ -23,7 +23,7 @@ import json
 
 def some_func(name, guid):
     # define capture provider info "{11111111-1111-1111-1111-111111111111}"
-    providers = [etw.ProviderInfo(name, etw.GUID(guid))]
+    providers = [etw.ProviderInfo(name, etw.GUID("{"+guid+"}"))]
     # create instance of ETW class
     job = etw.ETW(providers=providers, event_callback=lambda x: print(str(x).replace("'","\"")))
 
@@ -48,6 +48,7 @@ def some_func(name, guid):
             # stop capture
             job.stop()
             break
+        time.sleep(10)
 
 
 if __name__ == '__main__':

@@ -11,6 +11,7 @@ import (
 	"unsafe"
 	"strings"
 	"github.com/Darkera524/WinTraceTool/g"
+	"github.com/Darkera524/WinTraceTool/model"
 )
 
 type TraceBuilder struct{
@@ -18,7 +19,11 @@ type TraceBuilder struct{
 	formmattedData map[string]interface{}
 }
 
-func (t *TraceBuilder) getData() error {
+var (
+	collectElements []string
+)
+
+func (t *TraceBuilder) getData(guid string) error {
 	err := Checkpy()
 	if err != nil {
 		//差错处理
@@ -27,11 +32,17 @@ func (t *TraceBuilder) getData() error {
 	t.rawData = make(map[string]interface{})
 
 	command := "python"
-	params := []string{"trace.py", "Microsoft-Windows-DNS-Server", "EB79061A-A566-4698-9119-3ED2807060E7"}
+	params := []string{"trace.py", g.ProviderMap.MetricMap[guid], guid}
 
+	//
+	fmt.Println(g.ProviderMap.MetricMap[guid])
+
+	collectElements = g.ProviderMap.Providers[guid]
+	model.TracingList = append(model.TracingList, guid)
 	cmd,reader,err := ExecCommand(command, params)
 
 	if err != nil {
+		model.TracingList = remove(model.TracingList, guid)
 		return err
 	}
 
@@ -39,9 +50,9 @@ func (t *TraceBuilder) getData() error {
 	for {
 		line, err2 := reader.ReadString('\n')
 		if err2 != nil || io.EOF == err2 {
+			model.TracingList = remove(model.TracingList, guid)
 			break
 		}
-		//fmt.Print(line)
 
 		/*bytesline := []byte(line)
 		for i, ch := range bytesline {
@@ -56,24 +67,34 @@ func (t *TraceBuilder) getData() error {
 			}
 		}*/
 
-		go t.formatData(line)
+		go t.formatData(line, g.ProviderMap.MetricMap[guid])
 	}
 
 	cmd.Wait()
 	return nil
 }
 
-func (t *TraceBuilder) formatData(line string) error {
+func (t *TraceBuilder) formatData(line string, provider string) error {
 	rs := []rune(string(line))
+	ins_bytes := []byte(line)
 	length := len(rs)
-	eventCode,err := strconv.Atoi(string(rs[1:4]))
+
+	var coma_index int
+	for i,v := range ins_bytes{
+		if v == ','{
+			coma_index = i
+			break
+		}
+	}
+
+	eventCode,err := strconv.Atoi(string(rs[1:coma_index]))
 	if err != nil {
 		return err
 	}
 
 	//fmt.Println(string(rs[length-4:length]))
 
-	json := string((rs[6:length-3]))
+	json := string((rs[coma_index+1:length-3]))
 
 	jsonobj,err := simplejson.NewJson([]byte(json))
 	if err != nil {
@@ -87,10 +108,7 @@ func (t *TraceBuilder) formatData(line string) error {
 	timestamp_unix := int64((float64(timestamp_win)/10000000.0 - 11644473600.0) * 1000.0)
 	//fmt.Println(taskname)
 
-	//get the collection element tuple form server depending on providers and eventcode
-	collectElements := []string{"Task Name", "QNAME", "Source"}
-
-	metric := "trace.dns"
+	metric := "trace." + provider
 	datapoints := [][]int64{[]int64{timestamp_unix, 1}}
 
 	send_json := simplejson.New()
@@ -112,27 +130,28 @@ func (t *TraceBuilder) formatData(line string) error {
 	if err != nil {
 		return err
 	}
-
-	t.sendData(data)
+	fmt.Println(string(data))
+	err = t.sendData(data)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
 
 func (t *TraceBuilder) sendData(data []byte) error {
-	fmt.Println(string(data))
 	reader := bytes.NewBuffer(data)
-
 	//url从配置文件中读取
 	url := g.GetConfig().KairosDB_path
 
 	request,err := http.Post(url,"application/json;charset=utf-8", reader)
 	if err != nil {
-		return err
+		fmt.Println(err.Error())
 	}
 
 	respBytes, err := ioutil.ReadAll(request.Body)
 	if err != nil {
-		return err
+		fmt.Println(err.Error())
 	}
 	//byte数组直接转成string，优化内存
 	str := (*string)(unsafe.Pointer(&respBytes))
@@ -140,4 +159,15 @@ func (t *TraceBuilder) sendData(data []byte) error {
 
 	return nil
 }
+
+func remove(slice []string, elem string) []string {
+	for i,v := range slice {
+		if v == elem {
+			slice = append(slice[:i], slice[i+1:]...)
+		}
+	}
+	return slice
+}
+
+
 

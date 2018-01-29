@@ -7,8 +7,8 @@ import "fmt"
  */
 
  type TraceInterface interface {
- 	getData() error
- 	formatData(string) error
+ 	getData(string) error
+ 	formatData(string, string) error
  	sendData([]byte) error
  }
 
@@ -16,12 +16,12 @@ import "fmt"
  	Trace TraceInterface
  }
 
- func (t *Trace) CreateTrace() {
+ func (t *Trace) CreateTrace(guid string) {
  	if t == nil {
  		fmt.Print("nil trace")
  		return
 	}
-	err := t.Trace.getData()
+	err := t.Trace.getData(guid)
 	if err != nil {
 		fmt.Println(err.Error())
 	}

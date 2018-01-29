@@ -1,5 +1,9 @@
 package model
 
+var(
+	TracingList []string
+)
+
 type RequestModel struct {
 	Hostname string
 	Checksum string

@@ -6,6 +6,7 @@ import (
 	"github.com/Darkera524/WinTraceTool/g"
 	"github.com/Darkera524/WinTraceTool/http"
 	"github.com/Darkera524/WinTraceTool/dispatch"
+	"time"
 )
 
 func main(){
@@ -13,10 +14,15 @@ func main(){
 
 	g.ParseConfig(*cfg)
 	g.InitRpcClients()
-	go http.Start()
+
 	go g.GetProviders(60)
 
+	go http.Start()
+	time.Sleep(time.Duration(10) * time.Second)
 	go dispatch.TraceExec()
+
+	select {}
+
 }
 
 

@@ -3,6 +3,7 @@ package g
 import (
 	"github.com/Darkera524/WinTraceTool/model"
 	"time"
+	"fmt"
 )
 
 var (
@@ -23,10 +24,12 @@ func GetProviders(interval int){
 			Checksum: checksum,
 		}
 
+		ProviderMap = nil
 		err = HbsClient.Call("Trace.Providers", req, &ProviderMap)
 		if err != nil {
 
 		}
+		fmt.Println(ProviderMap)
 
 		time.Sleep(time.Duration(interval) * time.Second)
 	}
