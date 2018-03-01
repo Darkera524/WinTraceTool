@@ -3,7 +3,6 @@ package http
 import (
 	"github.com/Darkera524/WinTraceTool/g"
 	"net/http"
-	"fmt"
 	_ "net/http/pprof"
 	"encoding/json"
 )
@@ -49,7 +48,7 @@ func AutoRender(w http.ResponseWriter, data interface{}, err error) {
 func Start() {
 	port := g.GetConfig().Listen_port
 
-	fmt.Println(port)
+	g.Logger().Println(port)
 
 	s := &http.Server{
 		Addr: port,
@@ -58,6 +57,6 @@ func Start() {
 
 	err := s.ListenAndServe()
 	if err != nil {
-		fmt.Println(err.Error())
+		g.Logger().Println(err.Error())
 	}
 }

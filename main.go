@@ -12,8 +12,11 @@ import (
 func main(){
 	cfg := flag.String("c", "cfg.json", "configuration file")
 
+	g.InitLog()
+	g.InitEncoding()
 	g.ParseConfig(*cfg)
 	g.InitRpcClients()
+
 
 	go g.GetProviders(60)
 

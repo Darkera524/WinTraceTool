@@ -11,7 +11,7 @@ import (
 func TraceExec() {
 	model.TracingList = []string{}
 	for {
-		for k, _ := range g.ProviderMap.Providers {
+		for k, name := range g.ProviderMap.MetricMap {
 			isTracing := false
 			for _, i := range model.TracingList {
 				if i == k {
@@ -23,10 +23,12 @@ func TraceExec() {
 				continue
 			}
 
-			trace_ins := trace.TraceBuilder{}
+			if name == "dns" {
+				trace_ins := trace.TraceBuilder{}
 
-			traceins := trace.Trace{&trace_ins}
-			go traceins.CreateTrace(k)
+				traceins := trace.Trace{&trace_ins}
+				go traceins.CreateTrace(k)
+			}
 		}
 		time.Sleep(time.Duration(60) * time.Second)
 	}

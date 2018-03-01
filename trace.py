@@ -40,15 +40,19 @@ def some_func(name, guid):
                 "Provider": guid
             }
         ]
+        try:
+            r = requests.post(url, json.dumps(d))
+            response = r.text
 
-        r = requests.post(url, json.dumps(d))
-        response = r.text
-
-        if response == "no":
-            # stop capture
+            if response == "no":
+                # stop capture
+                job.stop()
+                break
+            time.sleep(10)
+        except Exception as e:
+            print("dead")
             job.stop()
             break
-        time.sleep(10)
 
 
 if __name__ == '__main__':

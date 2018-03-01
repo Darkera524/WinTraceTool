@@ -1,6 +1,8 @@
 package trace
 
-import "fmt"
+import (
+	"github.com/Darkera524/WinTraceTool/g"
+)
 
 /*
 	使用建造者设计模式来使构造与实现分离
@@ -8,7 +10,7 @@ import "fmt"
 
  type TraceInterface interface {
  	getData(string) error
- 	formatData(string, string) error
+ 	formatData(string) error
  	sendData([]byte) error
  }
 
@@ -18,12 +20,12 @@ import "fmt"
 
  func (t *Trace) CreateTrace(guid string) {
  	if t == nil {
- 		fmt.Print("nil trace")
+ 		g.Logger().Print("nil trace")
  		return
 	}
 	err := t.Trace.getData(guid)
 	if err != nil {
-		fmt.Println(err.Error())
+		//g.Logger().Println(err.Error())
 	}
  }
 

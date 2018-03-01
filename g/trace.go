@@ -16,7 +16,7 @@ func GetProviders(interval int){
 		var checksum string = "nil"
 		hostname, err := Hostname()
 		if err != nil {
-
+			Logger().Println(err.Error())
 		}
 
 		req := model.RequestModel{
@@ -27,7 +27,7 @@ func GetProviders(interval int){
 		ProviderMap = nil
 		err = HbsClient.Call("Trace.Providers", req, &ProviderMap)
 		if err != nil {
-
+			Logger().Println(err.Error())
 		}
 		fmt.Println(ProviderMap)
 

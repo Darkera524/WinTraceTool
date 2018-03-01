@@ -2,7 +2,6 @@ package g
 
 import (
 	"github.com/toolkits/file"
-	"fmt"
 	"encoding/json"
 	"sync"
 	"os"
@@ -32,12 +31,12 @@ func GetConfig() *Config {
 func ParseConfig(cfg string) {
 	configContent, err := file.ToTrimString(cfg)
 	if err != nil {
-		fmt.Println(err.Error())
+		Logger().Println(err.Error())
 	}
 	var c Config
 	err = json.Unmarshal([]byte(configContent), &c)
 	if err != nil {
-		fmt.Println(err.Error())
+		Logger().Println(err.Error())
 	}
 
 	lock.Lock()
@@ -50,7 +49,7 @@ func ParseConfig(cfg string) {
 func Hostname() (string, error){
 	hostname, err := os.Hostname()
 	if err != nil {
-
+		Logger().Println(err.Error())
 	}
 	return hostname, err
 }

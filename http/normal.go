@@ -22,7 +22,7 @@ func configNormalRoute() {
 
 		traceornot := false
 
-		for k,_ := range g.ProviderMap.Providers {
+		for k,_ := range g.ProviderMap.MetricMap {
 			if k == provider[0].Provider {
 				writer.Write([]byte("ok"))
 				traceornot = true
