@@ -247,6 +247,9 @@ func (t *TraceBuilder)handle_dns_256(time_string string,jsonobj *simplejson.Json
 
 	//exec sql
 	err = g.ExecSql(sql)
+	if err != nil {
+		g.Logger().Println("Error occurred when exec the sql" + sql)
+	}
 }
 
 func (t *TraceBuilder)handle_dns_257(time_string string,jsonobj *simplejson.Json){

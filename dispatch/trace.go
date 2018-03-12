@@ -33,3 +33,9 @@ func TraceExec() {
 		time.Sleep(time.Duration(60) * time.Second)
 	}
 }
+
+/*func test(){
+	wmi_ins := wmi_collector.WmiStatistics{}
+
+	traceins := wmi_collector.Wmi{wmi_ins}
+}*/

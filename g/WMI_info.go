@@ -6,10 +6,10 @@ import (
 )
 
 var (
-	ProviderMap *model.ProvidersResp
+	WMI_info_list *model.WmiResp
 )
 
-func GetProviders(interval int){
+func GetWMIInfo(interval int){
 	for {
 		//var resp model.ProvidersResp
 		var checksum string = "nil"
@@ -23,8 +23,8 @@ func GetProviders(interval int){
 			Checksum: checksum,
 		}
 
-		ProviderMap = nil
-		err = HbsClient.Call("Trace.Providers", req, &ProviderMap)
+		WMI_info_list = nil
+		err = HbsClient.Call("Wmi.Infos", req, &WMI_info_list)
 		if err != nil {
 			Logger().Println(err.Error())
 		}
@@ -32,5 +32,4 @@ func GetProviders(interval int){
 
 		time.Sleep(time.Duration(interval) * time.Second)
 	}
-
 }

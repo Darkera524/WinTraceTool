@@ -17,12 +17,13 @@ func main(){
 	g.ParseConfig(*cfg)
 	g.InitRpcClients()
 
-
 	go g.GetProviders(60)
+	go g.GetWMIInfo(60)
 
 	go http.Start()
 	time.Sleep(time.Duration(10) * time.Second)
 	go dispatch.TraceExec()
+	go dispatch.WmiExec()
 
 	select {}
 

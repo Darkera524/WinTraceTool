@@ -6,13 +6,13 @@ import (
 )
 
 var (
-	ProviderMap *model.ProvidersResp
+	WMI_statistic_list []string
 )
 
-func GetProviders(interval int){
+func GetWMIStatistics(interval int){
 	for {
 		//var resp model.ProvidersResp
-		var checksum string = "nil"
+		//var checksum string = "nil"
 		hostname, err := Hostname()
 		if err != nil {
 			Logger().Println(err.Error())
@@ -20,11 +20,10 @@ func GetProviders(interval int){
 
 		req := model.RequestModel{
 			Hostname: hostname,
-			Checksum: checksum,
 		}
 
-		ProviderMap = nil
-		err = HbsClient.Call("Trace.Providers", req, &ProviderMap)
+		WMI_statistic_list = nil
+		err = HbsClient.Call("Wmi.statistics", req, &WMI_statistic_list)
 		if err != nil {
 			Logger().Println(err.Error())
 		}
@@ -32,5 +31,4 @@ func GetProviders(interval int){
 
 		time.Sleep(time.Duration(interval) * time.Second)
 	}
-
 }

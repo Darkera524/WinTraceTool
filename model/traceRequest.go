@@ -2,6 +2,7 @@ package model
 
 var(
 	TracingList []string
+	WmiInfoList []string
 )
 
 type RequestModel struct {
@@ -12,6 +13,12 @@ type RequestModel struct {
 type ProvidersResp struct {
 	//Providers map[string][]string
 	MetricMap map[string]string
+	Checksum string
+}
+
+type WmiResp struct {
+	WmiList []string
+	Database []string
 	Checksum string
 }
 
